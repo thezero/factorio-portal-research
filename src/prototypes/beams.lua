@@ -1,11 +1,12 @@
+local GRAPHICS_BASE = "__portal-research__/graphics/"
 local beam_blend_mode = "additive-soft"
 
-function makeBeam(sound)
+function makeBeam(name, sound, width, tint)
   local result = 
   {
     type = "beam",
     flags = {"not-on-map"},
-    width = 2.5,
+    width = width,
     damage_interval = 20,
     -- TODO: Any to completely remove the action?
     action =
@@ -17,8 +18,9 @@ function makeBeam(sound)
         target_effects =
         {
           {
-            type = "damage",
-            damage = { amount = 0, type = "electric"}
+            -- https://wiki.factorio.com/Types/AttackReaction#TriggerEffect_Definition
+            type = "create-smoke",
+            entity_name = "nuclear-smoke",
           }
         }
       }
@@ -32,6 +34,7 @@ function makeBeam(sound)
       frame_count = 16,
       animation_speed = 0.5,
       blend_mode = beam_blend_mode,
+      tint = tint
     },
     tail =
     {
@@ -41,6 +44,7 @@ function makeBeam(sound)
       height = 39,
       frame_count = 16,
       blend_mode = beam_blend_mode,
+      tint = tint
     },
     body =
     {
@@ -51,6 +55,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
       {
         filename = "__base__/graphics/entity/beam/beam-body-2.png",
@@ -59,6 +64,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
       {
         filename = "__base__/graphics/entity/beam/beam-body-3.png",
@@ -67,6 +73,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
       {
         filename = "__base__/graphics/entity/beam/beam-body-4.png",
@@ -75,6 +82,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
       {
         filename = "__base__/graphics/entity/beam/beam-body-5.png",
@@ -83,6 +91,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
       {
         filename = "__base__/graphics/entity/beam/beam-body-6.png",
@@ -91,6 +100,7 @@ function makeBeam(sound)
         height = 39,
         frame_count = 16,
         blend_mode = beam_blend_mode,
+        tint = tint
       },
     }
   }
@@ -103,16 +113,31 @@ function makeBeam(sound)
         volume = 0.7
       }
     }
-    result.name = "microwave-beam"
+    result.name = name
   else
-    result.name = "microwave-beam-no-sound"
+    result.name = name .. "-no-sound"
   end
   return result;
 end
 
 data:extend(
 {
-  makeBeam(true),
-  makeBeam(false)
+  makeBeam("microwave-beam", true, 2.5, {r=0,g=1,b=0}),
+  makeBeam("microwave-beam", false, 2.5, {r=0,g=1,b=0}),
+  makeBeam("orbital-microwave-beam", true, 10, {r=0,g=1,b=0}),
+  makeBeam("orbital-microwave-beam", false, 10, {r=0,g=1,b=0}),
+  {
+    -- Dummy entity to act as orbital source for beam
+    -- TODO: For equipment, could implement as a sticker on the player so it moves properly with the player?
+    type="simple-entity",
+    name="orbital-microwave-beam-source",
+    flags = {"not-on-map"},
+    collision_mask = {},
+    picture = {
+      filename = GRAPHICS_BASE .. "blank.png",
+      width = 1,
+      height = 1
+    }
+  }
 }
 )
